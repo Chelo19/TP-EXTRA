@@ -1,0 +1,74 @@
+#include <iostream>
+#include <stdlib.h>
+#include <time.h>
+
+using namespace std;
+
+int main(){
+    int numAleatorio1 = 0;
+    int numAleatorio2 = 0;
+    int dificultad = 0;
+    int comenzarJuego = 0;
+    int operadorMatematico = 0;
+    int respuestaUsuario = 0;
+    int respuesta = 0;
+    int exit = 0;
+    float score = 0;
+    int repeticion = 0;
+    float calificacion;
+
+    cout << "Ingresa la dificultad ( Facil=1 | Medio=2 | Dificil=3 | Extremo=4 )\n";
+    cin >> dificultad;
+    switch(dificultad){
+        case 2:
+            dificultad = dificultad * 2;
+            break;
+        case 3:
+            dificultad = dificultad * 4;
+            break;
+        case 4:
+            dificultad = dificultad * 19;
+            break;
+    }
+    cout << "Quieres comenzar el juego? ( si=1 )\n";
+    cin >> comenzarJuego;
+    do{
+        repeticion++;
+        srand(time(NULL));
+        numAleatorio1 = rand() % (10 * dificultad);
+        numAleatorio2 = rand() % (10 * dificultad);
+        operadorMatematico = rand() % 3;
+        if(comenzarJuego == 1){
+            switch(operadorMatematico){
+                case 0:
+                    cout << numAleatorio1 << " * " << numAleatorio2 << endl;
+                    cin >> respuestaUsuario;
+                    respuesta = numAleatorio1 * numAleatorio2;
+                    break;
+                case 1:
+                    cout << numAleatorio1 << " + " << numAleatorio2 << endl;
+                    cin >> respuestaUsuario;
+                    respuesta = numAleatorio1 + numAleatorio2;
+                    break;
+                case 2:
+                    cout << numAleatorio1 << " - " << numAleatorio2 << endl;
+                    cin >> respuestaUsuario;
+                    respuesta = numAleatorio1 - numAleatorio2;
+                    break;
+            }
+            if(respuesta == respuestaUsuario){
+                cout << "Respuesta correcta\n";
+                score++;
+            }
+            else{
+                cout << "Respuesta incorrecta\n";
+            }
+        }
+        cout << "Quieres volver a jugar? ( si=1 | no=0 )\n";
+        cin >> exit;
+    }
+    while(exit != 0);
+    calificacion = score / repeticion * 100;
+    cout << "Tu calificacion es: " << calificacion << endl;
+    cout << "Gracias por jugar" << endl;
+}

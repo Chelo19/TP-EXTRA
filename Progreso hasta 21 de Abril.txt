@@ -1,0 +1,121 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <stdlib.h>
+#include <time.h>
+
+using namespace std;
+
+void desplegarPreguntas(vector<string> &vecPreguntas, vector<string> &vecRespuestas){
+    int exit = 0;
+    int numPreg = 0;
+    string pregunta = "";
+    string respuesta = "";
+    while(exit != 1) {
+        cout << "Ingresa la pregunta " << numPreg+1 << endl;
+        getline(cin, pregunta);
+        vecPreguntas.push_back(pregunta);
+        cout << "Ingresa la respuesta " << numPreg+1 << endl;
+        getline(cin, respuesta);
+        vecRespuestas.push_back(respuesta);
+        cout << "Deseas salir? '1 para si' " << endl;
+        cin >> exit;
+        numPreg++;
+        cin.ignore();
+    }
+}
+
+int borrarPosVector(vector<string> &vecPreguntasCopia, vector<string> &vecRespuestasCopia, int &numPreguntas, int numAleatorio){
+
+    for(int i=0;i<numPreguntas;i++){
+        if(i==numAleatorio){
+            while(i<numPreguntas-1){
+                vecPreguntasCopia[i]=vecPreguntasCopia[i+1];
+                vecRespuestasCopia[i]=vecRespuestasCopia[i+1];
+                i++;
+            }
+            break;
+        }
+    }
+    numPreguntas=numPreguntas-1;
+    vecPreguntasCopia.pop_back();
+    return 0;
+
+}
+
+int copiarVector(vector<string> &vecPreguntas, vector<string> &vecRespuestas, vector<string> &vecPreguntasCopia, vector<string> &vecRespuestasCopia){
+    vecPreguntasCopia.clear();              //se elimina todo lo que tiene el vector para evitar que se guarden datos incorrectos
+    vecRespuestasCopia.clear();
+    for(int i = 0 ; i < vecPreguntas.size() ; i++){
+        vecPreguntasCopia.push_back(vecPreguntas[i]);
+        vecRespuestasCopia.push_back(vecRespuestas[i]);
+    }
+}
+
+void responderPreguntas(vector<string> &vecPreguntas, vector<string> &vecRespuestas, vector<string> &vecPreguntasCopia, vector<string> &vecRespuestasCopia, int &numPreguntas, int comodin){
+    srand(time(NULL));
+    string respUsuario = "";
+    int numAleatorio = 0;
+    float score = 0;
+    float calif;
+    int numPregBorradas = 0;
+    for(int i = 0; i < numPreguntas+numPregBorradas; i++){
+        cin.ignore();
+        numAleatorio = rand() % (numPreguntas-0);
+        cout << i+1 << " - " << vecPreguntasCopia[numAleatorio] << endl;
+        cout << "Respuesta\n";
+        getline(cin, respUsuario);
+        if(respUsuario == "comodin" && comodin > 0){
+            respUsuario = vecRespuestasCopia[numAleatorio];
+            comodin = comodin-1;
+            cout << "Comodines restantes: " << comodin << endl;
+        }
+        if(respUsuario == "comodin" && comodin <= 0){
+            cout << "Ya no tienes comodines "<< endl;
+            cout << i+1 << " - " << vecPreguntasCopia[numAleatorio] << endl;
+            cout << "Responde de nuevo, por favor\n";
+            getline(cin, respUsuario);
+        }
+        if(respUsuario == vecRespuestasCopia[numAleatorio]){
+            cout << "Respuesta correcta\n";
+            score++;
+        }
+        else{
+            cout << "Respuesta incorrecta\n";
+        }
+        borrarPosVector(vecPreguntasCopia, vecRespuestasCopia, numPreguntas, numAleatorio);
+        numPregBorradas++;
+        if(numPreguntas != 0){
+            cout << "Pulsa enter para continuar\n";
+        }
+    }
+    cout << "\n";
+    calif = score/(numPreguntas+numPregBorradas)*100;
+    cout << "Calificacion: " << calif << endl;
+}
+
+int main() {
+    vector<string> vecPreguntas(0);
+    vector<string> vecRespuestas(0);
+    vector<string> vecPreguntasCopia(0);
+    vector<string> vecRespuestasCopia(0);
+    int numPreguntas = 0;
+    int iniciarJuego = 0;
+    int comodin = 1;
+    int exitJuegoPreguntas = 1;
+    desplegarPreguntas(vecPreguntas, vecRespuestas);
+    cout << "Deseas iniciar el juego? '1 para si '" << endl;
+    cin >> iniciarJuego;
+    do{
+        numPreguntas = vecPreguntas.size();
+        if(iniciarJuego == 1){
+            copiarVector(vecPreguntas, vecRespuestas, vecPreguntasCopia, vecRespuestasCopia);
+            cout << "Recuerda que puedes usar un comodin para saltar una pregunta\nsolo escribe 'comodin'! " << endl;
+            responderPreguntas(vecPreguntas, vecRespuestas, vecPreguntasCopia, vecRespuestasCopia, numPreguntas, comodin);
+            cout << "FIN" << endl;
+        }
+        cout << "Quieres volver a jugar? ( si=1 / no=0 )\n";
+        cin >> exitJuegoPreguntas;
+    }
+    while(exitJuegoPreguntas != 0);
+}
